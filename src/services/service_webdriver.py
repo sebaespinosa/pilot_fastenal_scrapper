@@ -21,10 +21,13 @@ class WebScrapingService:
     #     page_source = self.adapter.get_page_source(url)
     #     return page_source
 
-    def scrape_page_async(self):
+    def scrape_page_async(self, PageNumber = 1):
         load_dotenv()
         url = os.getenv("SCRAPING_URL")
-        url += "&page=1&pageSize=48"
+        if(PageNumber == 1):
+            url += "&page=1&pageSize=48"
+        else:
+            url += f"&page={PageNumber}&pageSize=48"
         if not url:
             raise ValueError("SCRAPING_URL is not set in the environment variables.")
         
@@ -33,30 +36,48 @@ class WebScrapingService:
 
     def get_products(self):
         """
-        Extracts all product names from the page using the provided CSS_SELECTOR.
+        Extracts all product details from all pages using pagination.
         """
         try:
-            
             products = []
-            
-            # Find all elements matching the CSS_SELECTOR
-            table = self.adapter.driver.find_element(By.CSS_SELECTOR, "table.table.table-sm.feco-product-list-view-table")
-            rows = table.find_elements(By.TAG_NAME, "tr")
-            
-            for row in rows:
-                tds = row.find_elements(By.TAG_NAME, "td")
-                sku = tds[0].find_element(By.CSS_SELECTOR, "a.default-nav-link.font-weight-normal")
-                link = tds[0].find_element(By.TAG_NAME, "a").get_attribute("href")
-                
-                product = Product(product_sku=sku.text, product_link=link)
-                products.append(product)
-                
+            scrapping = True
+            currentPage = 1
+
+            while scrapping:
+                # Find all elements matching the CSS_SELECTOR
+                table = self.adapter.driver.find_element(By.CSS_SELECTOR, "table.table.table-sm.feco-product-list-view-table")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+
+                for row in rows:
+                    tds = row.find_elements(By.TAG_NAME, "td")
+                    sku = tds[0].find_element(By.CSS_SELECTOR, "a.default-nav-link.font-weight-normal")
+                    link = tds[0].find_element(By.TAG_NAME, "a").get_attribute("href")
+
+                    product = Product(product_sku=sku.text, product_link=link)
+                    products.append(product)
+
+                try:
+                    # Locate the pagination element
+                    pagination = self.adapter.driver.find_element(By.CSS_SELECTOR, "ul.pagination")
+                    pages = pagination.find_elements(By.TAG_NAME, "li")
+
+                    # Check if the last two elements have the class "page-item disabled"
+                    if "disabled" in pages[-1].get_attribute("class") and "disabled" in pages[-2].get_attribute("class"):
+                        scrapping = False
+                    else:
+                        # Proceed to the next page
+                        currentPage += 1
+                        self.scrape_page_async(currentPage)
+                except Exception as e:
+                    print(f"Error handling pagination: {e}")
+                    break
+
             print(f"Products SKU: {len(products)}")
-                
-            
+            return products
+
         except Exception as e:
-            products = [f"Error locating product names: {e}"]
-        return products
+            print(f"Error locating product names: {e}")
+            return []
 
 # Updated utility function to create a WebDriver instance
 def create_webdriver():
