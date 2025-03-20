@@ -2,6 +2,7 @@ import os
 import re
 from dotenv import load_dotenv
 from adapters.adapter_webdriver import WebDriverAdapter
+from adapters.adapter_sheet import SheetAdapter
 from models.product import Product
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -10,8 +11,9 @@ from selenium.webdriver.common.by import By  # Import By for locating elements
 from webdriver_manager.chrome import ChromeDriverManager  # Import webdriver-manager
 
 class WebScrapingService:
-    def __init__(self, adapter: WebDriverAdapter):
+    def __init__(self, adapter: WebDriverAdapter, sheet_adapter: SheetAdapter):
         self.adapter = adapter
+        self.sheet_adapter = sheet_adapter
 
     # def scrape_page(self):
     #     load_dotenv()
@@ -86,7 +88,7 @@ class WebScrapingService:
 
     def get_product_details(self, product):
         """
-        Extracts product information from a single product page.
+        Extracts product information from a single product page and stores it in the sheet.
         """
         try:
             product.product_name = self.adapter.driver.find_element(By.XPATH, "//h1[@class='font-weight-bolder feco-seo-title ecom-proddetail-title']//span").text
@@ -96,6 +98,9 @@ class WebScrapingService:
             product.product_current_price = self.adapter.driver.find_element(By.XPATH, "//span[@class='font-weight-600' and normalize-space()='Online Price:']/following-sibling::span").text
             product.product_current_price = re.sub(r'[$]|[^0-9]+$', '', product.product_current_price)
             print(product)
+
+            # Store product details in the sheet
+            self.sheet_adapter.add_product_row(product)
         except Exception as e:
             print(f"Error extracting product details: {e}")
             # Assign default values to attributes except product_sku and product_link
