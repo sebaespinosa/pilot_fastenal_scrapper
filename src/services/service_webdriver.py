@@ -24,6 +24,7 @@ class WebScrapingService:
     def scrape_page_async(self):
         load_dotenv()
         url = os.getenv("SCRAPING_URL")
+        url += "&page=1&pageSize=48"
         if not url:
             raise ValueError("SCRAPING_URL is not set in the environment variables.")
         
@@ -47,10 +48,10 @@ class WebScrapingService:
                 sku = tds[0].find_element(By.CSS_SELECTOR, "a.default-nav-link.font-weight-normal")
                 link = tds[0].find_element(By.TAG_NAME, "a").get_attribute("href")
                 
-                product = Product(sku, link)
+                product = Product(product_sku=sku.text, product_link=link)
                 products.append(product)
                 
-                print(f"Product SKU: {product.sku}")
+            print(f"Products SKU: {len(products)}")
                 
             
         except Exception as e:

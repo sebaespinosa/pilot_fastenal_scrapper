@@ -1,6 +1,7 @@
 class Product:
-    def __init__(self, product_name: str, product_sku: str, product_link: str, product_description: str, 
-                 product_manufacturer: str, product_metal_type: str, product_current_price: str):
+    def __init__(self, *, product_name: str = None, product_sku: str = None, product_link: str = None, 
+                 product_description: str = None, product_manufacturer: str = None, 
+                 product_metal_type: str = None, product_current_price: str = None):
         self.product_name = product_name
         self.product_sku = product_sku
         self.product_link = product_link
