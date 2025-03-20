@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from adapters.adapter_webdriver import WebDriverAdapter
 from models.product import Product
@@ -32,6 +33,10 @@ class WebScrapingService:
             raise ValueError("SCRAPING_URL is not set in the environment variables.")
         
         html_content = self.adapter.get_page_source_async(url)
+        return html_content
+    
+    def scrape_single_page(self, product):
+        html_content = self.adapter.get_page_source_async(product.product_link)
         return html_content
 
     def get_products(self):
@@ -78,6 +83,27 @@ class WebScrapingService:
         except Exception as e:
             print(f"Error locating product names: {e}")
             return []
+
+    def get_product_details(self, product):
+        """
+        Extracts product information from a single product page.
+        """
+        try:
+            product.product_name = self.adapter.driver.find_element(By.XPATH, "//h1[@class='font-weight-bolder feco-seo-title ecom-proddetail-title']//span").text
+            product.product_description = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer Part No.']]/td[2]").text
+            product.product_manufacturer = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer']]/td[2]").text
+            product.product_metal_type = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-bold' and normalize-space()='Material']]/td[2]").text
+            product.product_current_price = self.adapter.driver.find_element(By.XPATH, "//span[@class='font-weight-600' and normalize-space()='Online Price:']/following-sibling::span").text
+            product.product_current_price = re.sub(r'[$]|[^0-9]+$', '', product.product_current_price)
+            print(product)
+        except Exception as e:
+            print(f"Error extracting product details: {e}")
+            # Assign default values to attributes except product_sku and product_link
+            product.product_name = 0
+            product.product_description = 0
+            product.product_manufacturer = 0
+            product.product_metal_type = 0
+            product.product_current_price = 0
 
 # Updated utility function to create a WebDriver instance
 def create_webdriver():

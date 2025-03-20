@@ -39,3 +39,7 @@ NOTAS
 SOLID Principles: The WebDriverAdapter adheres to the Single Responsibility Principle by abstracting Selenium's WebDriver. The WebScrapingService handles the scraping logic, adhering to the Open/Closed Principle.
 Environment Variables: The .env file is used to manage the URL.
 Adapter Pattern: The WebDriverAdapter acts as an adapter between the Selenium WebDriver and the scraping service.
+
+
+TODO: Agregar logs (no estandarizados)
+TODO: Alertas en caso de falla en scrapping
