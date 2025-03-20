@@ -19,6 +19,7 @@ class WebDriverAdapter:
             var callback = arguments[arguments.length - 1];
             setTimeout(function() {
                 callback(document.getElementsByTagName('html')[0].innerHTML);
-            }, 10000);  // Wait for 10 seconds (10,000 milliseconds)
+            }, 10000);  // Wait for 10 seconds (3,000 milliseconds)
         """)
+        # TODO: Wait for page to finish instead of hard waiting 10 seconds
         return html_content

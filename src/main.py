@@ -1,5 +1,5 @@
-from adapters.adapter_webdriver import WebDriverAdapter
 from services.service_webdriver import WebScrapingService, create_webdriver
+from adapters.adapter_webdriver import WebDriverAdapter
 
 def main():
     driver = create_webdriver()
@@ -7,8 +7,10 @@ def main():
     service = WebScrapingService(adapter)
 
     try:
-        page_source = service.scrape_page_async()
-        print(page_source)  # Replace with your processing logic
+        # Scrape the page and get the product name
+        service.scrape_page_async()
+        service.get_products()
+        
     finally:
         driver.quit()
 
