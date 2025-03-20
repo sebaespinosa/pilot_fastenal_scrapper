@@ -1,16 +1,16 @@
-import requests
-from bs4 import BeautifulSoup
+from adapters.adapter_webdriver import WebDriverAdapter
+from services.service_webdriver import WebScrapingService, create_webdriver
 
-def scrape_fastenal():
-    url = "https://www.fastenal.com/"
-    response = requests.get(url)
-    
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        # Add scraping logic here
-        print("Scraping successful!")
-    else:
-        print("Failed to retrieve the webpage.")
+def main():
+    driver = create_webdriver()
+    adapter = WebDriverAdapter(driver)
+    service = WebScrapingService(adapter)
+
+    try:
+        page_source = service.scrape_page()
+        print(page_source)  # Replace with your processing logic
+    finally:
+        driver.quit()
 
 if __name__ == "__main__":
-    scrape_fastenal()
+    main()

@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environment variables
+.env
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS files
+.DS_Store
+
+# Logs and debug files
+*.log
+*.out
+*.err
+
+# Selenium WebDriver binaries (if manually downloaded)
+chromedriver
+geckodriver
+
+# Cache files
+*.cache
+*.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Test output
+.tox/
+.nox/
+*.coverage
+*.hypothesis/
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Python egg files
+*.egg
+*.egg-info/
+dist/
+build/
