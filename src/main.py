@@ -7,7 +7,7 @@ def main():
     service = WebScrapingService(adapter)
 
     try:
-        page_source = service.scrape_page()
+        page_source = service.scrape_page_async()
         print(page_source)  # Replace with your processing logic
     finally:
         driver.quit()
