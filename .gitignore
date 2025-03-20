@@ -9,6 +9,9 @@ __pycache__/
 # Environment variables
 .env
 
+# Credentials file
+credentials.json
+
 # Virtual environments
 venv/
 env/
