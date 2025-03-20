@@ -92,7 +92,10 @@ class WebScrapingService:
         """
         try:
             product.product_name = self.adapter.driver.find_element(By.XPATH, "//h1[@class='font-weight-bolder feco-seo-title ecom-proddetail-title']//span").text
-            product.product_description = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer Part No.']]/td[2]").text
+            try:
+                product.product_description = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer Part No.']]/td[2]").text
+            except:
+                product.product_description = "Not available"
             product.product_manufacturer = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer']]/td[2]").text
             product.product_metal_type = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-bold' and normalize-space()='Material']]/td[2]").text
             product.product_current_price = self.adapter.driver.find_element(By.XPATH, "//span[@class='font-weight-600' and normalize-space()='Online Price:']/following-sibling::span").text

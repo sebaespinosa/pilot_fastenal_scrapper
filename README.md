@@ -43,3 +43,5 @@ Adapter Pattern: The WebDriverAdapter acts as an adapter between the Selenium We
 
 TODO: Agregar logs (no estandarizados)
 TODO: Alertas en caso de falla en scrapping
+
+Alerta de variación de precio por ahora es solo un print en pantalla
