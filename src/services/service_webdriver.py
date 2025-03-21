@@ -37,6 +37,9 @@ class WebScrapingService:
         html_content = self.adapter.get_page_source_async(url)
         return html_content
     
+    def close(self):
+        self.adapter.quit()
+    
     def scrape_single_page(self, product):
         html_content = self.adapter.get_page_source_async(product.product_link)
         return html_content
@@ -79,7 +82,7 @@ class WebScrapingService:
                     print(f"Error handling pagination: {e}")
                     break
 
-            print(f"Products SKU: {len(products)}")
+            print(f"Products to scrap: {len(products)}")
             return products
 
         except Exception as e:
@@ -97,10 +100,14 @@ class WebScrapingService:
             except:
                 product.product_description = "Not available"
             product.product_manufacturer = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-600' and normalize-space()='Manufacturer']]/td[2]").text
-            product.product_metal_type = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-bold' and normalize-space()='Material']]/td[2]").text
+            try:
+                product.product_metal_type = self.adapter.driver.find_element(By.XPATH, "//tr[td[@class='font-weight-bold' and normalize-space()='Material']]/td[2]").text
+            except:
+                product.product_metal_type = "Not available"
             product.product_current_price = self.adapter.driver.find_element(By.XPATH, "//span[@class='font-weight-600' and normalize-space()='Online Price:']/following-sibling::span").text
-            product.product_current_price = re.sub(r'[$]|[^0-9]+$', '', product.product_current_price)
-            print(product)
+            
+            # Remove everything after a space (including the space) and non-numeric characters
+            product.product_current_price = re.sub(r'[$]|[^0-9]+| .*$', '', product.product_current_price)
 
             # Store product details in the sheet
             self.sheet_adapter.add_product_row(product)
@@ -112,6 +119,7 @@ class WebScrapingService:
             product.product_manufacturer = 0
             product.product_metal_type = 0
             product.product_current_price = 0
+            self.sheet_adapter.add_product_row(product)
 
 # Updated utility function to create a WebDriver instance
 def create_webdriver():
